@@ -1,6 +1,6 @@
 package com.mentor.mentor.security;
 
-import com.mentor.mentor.model.User;
+import com.mentor.mentor.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

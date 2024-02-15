@@ -16,12 +16,12 @@ public class JwtUtils {
 
 
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
-    private String jwtSecret;
+    private final String jwtSecret = "2bd1c0bc1281a79e746c20fea74cb4b64c912241278659d4cba3790ce15dea18";
 
 
-    private int jwtExpiration;
+    private final int jwtExpiration = 90000000;
 
-    private String jwtCookie;
+    private String jwtCookie = "mentor";
 
     public String getJwtFromCookies(HttpServletRequest request) {
         Cookie cookie = WebUtils.getCookie(request, jwtCookie);

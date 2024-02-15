@@ -1,4 +1,4 @@
-package com.mentor.mentor.dto;
+package com.mentor.mentor.dto.form;
 
 import com.mentor.mentor.security.Role;
 import lombok.Data;

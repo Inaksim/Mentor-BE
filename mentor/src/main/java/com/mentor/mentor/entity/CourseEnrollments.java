@@ -1,4 +1,4 @@
-package com.mentor.mentor.model;
+package com.mentor.mentor.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

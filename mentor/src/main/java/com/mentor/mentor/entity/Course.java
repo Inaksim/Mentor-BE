@@ -1,6 +1,5 @@
-package com.mentor.mentor.model;
+package com.mentor.mentor.entity;
 
-import com.mentor.mentor.security.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,29 +7,26 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "Users")
+@Table(name = "Courses")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class User {
-
+public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long user_id;
+    private Long course_id;
     @Column(nullable = false)
-    private String firstName;
+    private String title;
+    @Column(nullable = false)
+    private String description;
+    @Column(nullable = false)
+    private String department;
+    @Column(nullable = false)
+    private int review;
+    @ManyToOne
+    @JoinColumn(name = "teacher_id", nullable = false)
+    private User teacher_id;
 
-    @Column(nullable = false)
-    private String lastName;
 
-    @Column(nullable = false)
-    private String password;
-
-    @Column(nullable = false)
-    private String email;
-
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Role role;
 }

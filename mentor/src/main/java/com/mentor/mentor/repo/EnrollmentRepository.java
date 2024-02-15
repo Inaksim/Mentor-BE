@@ -1,6 +1,6 @@
 package com.mentor.mentor.repo;
 
-import com.mentor.mentor.model.CourseEnrollments;
+import com.mentor.mentor.entity.CourseEnrollments;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

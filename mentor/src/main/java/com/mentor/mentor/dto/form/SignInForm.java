@@ -1,4 +1,4 @@
-package com.mentor.mentor.dto;
+package com.mentor.mentor.dto.form;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

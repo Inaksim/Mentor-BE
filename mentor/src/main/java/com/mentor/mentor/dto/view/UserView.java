@@ -1,4 +1,4 @@
-package com.mentor.mentor.dto;
+package com.mentor.mentor.dto.view;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

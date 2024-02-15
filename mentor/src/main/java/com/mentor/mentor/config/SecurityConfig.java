@@ -9,13 +9,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -27,9 +32,11 @@ import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @Order(SecurityProperties.BASIC_AUTH_ORDER)
-public class SecurityConfig {
+public class SecurityConfig{
 
+    @Autowired
     private final UserDetailsService userDetailsService;
 
     private String origin;
@@ -40,86 +47,90 @@ public class SecurityConfig {
     }
 
 
+
+
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(this.userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
     }
 
 
-    protected void configure(HttpSecurity http) throws Exception {
-        http = http.cors().and().csrf().disable();
-
-        http = http
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and();
-
-
-        http = http
-                .exceptionHandling()
-                .authenticationEntryPoint(
-                        (request, response, ex) -> response.sendError(
-                                HttpServletResponse.SC_UNAUTHORIZED,
-                                ex.getMessage()
-                        )
-                )
-                .accessDeniedHandler((request, response, ex) -> response.sendError(
-                        HttpServletResponse.SC_FORBIDDEN,
-                        ex.getMessage()
-                ))
-                .and();
-
-        http.authorizeRequests()
-                .requestMatchers("/auth/sing-up").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                .loginPage("/login")
-                .permitAll();
-
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-    }
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .csrf().disable()
-//                .authorizeRequests()
-//                .requestMatchers("/auth/*").permitAll()
-//                .and()
+//    protected void configure(HttpSecurity http) throws Exception {
+//        http = http.cors().and().csrf().disable();
+//
+//        http = http
 //                .sessionManagement()
 //                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .and()
-//                .authenticationProvider(authenticationProvider())
-//                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+//                .and();
 //
-//        return http.build();
 //
+//        http = http
+//                .exceptionHandling()
+//                .authenticationEntryPoint(
+//                        (request, response, ex) -> response.sendError(
+//                                HttpServletResponse.SC_UNAUTHORIZED,
+//                                ex.getMessage()
+//                        )
+//                )
+//                .accessDeniedHandler((request, response, ex) -> response.sendError(
+//                        HttpServletResponse.SC_FORBIDDEN,
+//                        ex.getMessage()
+//                ))
+//                .and();
+//
+//        http.authorizeRequests()
+//                .requestMatchers("/auth/sing-up").permitAll()
+//                .anyRequest().authenticated();
+//
+//        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+//        http.build();
 //    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http)throws Exception {
+        http
+
+                .csrf(AbstractHttpConfigurer::disable
+        )
+                .exceptionHandling()
+                .authenticationEntryPoint(
+                        (request, response, authException) -> response.sendError(
+                                HttpServletResponse.SC_UNAUTHORIZED,
+                                authException.getMessage()
+                        )
+                )
+                .accessDeniedHandler(((request, response, accessDeniedException) -> response.sendError(
+                        HttpServletResponse.SC_FORBIDDEN,
+                        accessDeniedException.getMessage()
+                )))
+                .and()
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/course/**").hasAnyAuthority()
+                        .anyRequest().authenticated()
+                )
+
+                .authenticationProvider(authenticationProvider()).addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+                return http.build();
+
+    }
 
     @Bean
     BCryptPasswordEncoder bCryptPasswordEncoderBean() { return new BCryptPasswordEncoder(); }
 
+
+
     @Bean
-    public AuthTokenFilter authenticationJwtTokenFilter() {return new AuthTokenFilter();}
-
-
-
-
-  /*  @Bean
-    public AuthenticationProvider authenticationProvider() {
-        final DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService());
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
-        return authenticationProvider;
+    public AuthTokenFilter authenticationJwtTokenFilter() {
+        return new AuthTokenFilter();
     }
-*/
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception{
         return config.getAuthenticationManager();
     }
-
-
-
-
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -133,5 +144,13 @@ public class SecurityConfig {
         return source;
     }
 
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(bCryptPasswordEncoderBean());
+        return authProvider;
+    }
 
 }

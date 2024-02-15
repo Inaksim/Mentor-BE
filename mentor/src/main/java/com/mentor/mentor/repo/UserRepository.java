@@ -1,6 +1,6 @@
 package com.mentor.mentor.repo;
 
-import com.mentor.mentor.model.User;
+import com.mentor.mentor.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

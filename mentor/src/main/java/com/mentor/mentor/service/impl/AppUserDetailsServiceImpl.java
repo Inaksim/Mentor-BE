@@ -1,7 +1,7 @@
-package com.mentor.mentor.service;
+package com.mentor.mentor.service.impl;
 
 import com.mentor.mentor.exception.ApplicationException;
-import com.mentor.mentor.model.User;
+import com.mentor.mentor.entity.User;
 import com.mentor.mentor.repo.UserRepository;
 import com.mentor.mentor.security.UserPrincipal;
 import lombok.AllArgsConstructor;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Service("AppUserDetailsService")
 @AllArgsConstructor(onConstructor = @__({@org.springframework.beans.factory.annotation.Autowired}))
-public class AppUserDetailsService implements UserDetailsService {
+public class AppUserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
 
