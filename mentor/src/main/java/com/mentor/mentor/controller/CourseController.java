@@ -2,12 +2,10 @@ package com.mentor.mentor.controller;
 
 import com.mentor.mentor.dto.form.SaveCourseForm;
 import com.mentor.mentor.dto.view.CourseView;
+import com.mentor.mentor.dto.view.UserView;
 import com.mentor.mentor.service.CourseService;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/course")
@@ -18,6 +16,11 @@ public class CourseController {
     @PostMapping("/save")
     public CourseView createCourse(@RequestBody SaveCourseForm form) {
         return courseService.saveCourse(form);
+    }
+
+    @GetMapping("/teacher/{id}")
+    public UserView seeTeacher(@PathVariable Long id ) {
+        return courseService.getTeacherByCourse(id);
     }
 
 }

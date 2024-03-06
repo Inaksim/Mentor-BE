@@ -1,6 +1,7 @@
 package com.mentor.mentor.config;
 
 
+
 import com.mentor.mentor.security.jwt.AuthTokenFilter;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -36,7 +38,7 @@ import java.util.Collections;
 @Order(SecurityProperties.BASIC_AUTH_ORDER)
 public class SecurityConfig{
 
-    @Autowired
+
     private final UserDetailsService userDetailsService;
 
     private String origin;
@@ -53,43 +55,12 @@ public class SecurityConfig{
         auth.userDetailsService(this.userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
     }
 
-
-//    protected void configure(HttpSecurity http) throws Exception {
-//        http = http.cors().and().csrf().disable();
-//
-//        http = http
-//                .sessionManagement()
-//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .and();
-//
-//
-//        http = http
-//                .exceptionHandling()
-//                .authenticationEntryPoint(
-//                        (request, response, ex) -> response.sendError(
-//                                HttpServletResponse.SC_UNAUTHORIZED,
-//                                ex.getMessage()
-//                        )
-//                )
-//                .accessDeniedHandler((request, response, ex) -> response.sendError(
-//                        HttpServletResponse.SC_FORBIDDEN,
-//                        ex.getMessage()
-//                ))
-//                .and();
-//
-//        http.authorizeRequests()
-//                .requestMatchers("/auth/sing-up").permitAll()
-//                .anyRequest().authenticated();
-//
-//        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-//        http.build();
-//    }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http)throws Exception {
         http
 
                 .csrf(AbstractHttpConfigurer::disable
+
         )
                 .exceptionHandling()
                 .authenticationEntryPoint(
@@ -108,11 +79,20 @@ public class SecurityConfig{
                 )
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/course/**").hasAnyAuthority()
+                        .requestMatchers("/test/**").permitAll()
+                        .requestMatchers("/course/**").authenticated()
                         .anyRequest().authenticated()
                 )
 
+
+
+
                 .authenticationProvider(authenticationProvider()).addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+
+              /*  http.oauth2ResourceServer((oauth2) -> oauth2
+                        .jwt(Customizer.withDefaults())
+                );*/
+
                 return http.build();
 
     }
@@ -142,6 +122,8 @@ public class SecurityConfig{
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+
+
     }
 
 

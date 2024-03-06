@@ -5,7 +5,6 @@ import com.mentor.mentor.dto.form.ResetPasswordForm;
 import com.mentor.mentor.dto.form.SignInForm;
 import com.mentor.mentor.dto.form.SignUpForm;
 import com.mentor.mentor.dto.view.UserView;
-import com.mentor.mentor.repo.UserRepository;
 import com.mentor.mentor.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 
@@ -15,16 +14,15 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
 
 
     private final UserServiceImpl userService;
-    private final UserRepository userRepository;
 
     @PostMapping(value = "/sign-up", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public UserView saveUser(@RequestBody SignUpForm form) {
+    public UserView  saveUser(@RequestBody SignUpForm form) {
         return userService.saveUser(form);
     }
 

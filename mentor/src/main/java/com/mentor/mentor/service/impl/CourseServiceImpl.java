@@ -3,6 +3,7 @@ package com.mentor.mentor.service.impl;
 import com.mentor.mentor.dto.form.SaveCourseForm;
 import com.mentor.mentor.dto.form.UpdateCourseForm;
 import com.mentor.mentor.dto.view.CourseView;
+import com.mentor.mentor.dto.view.UserView;
 import com.mentor.mentor.entity.Course;
 import com.mentor.mentor.entity.User;
 import com.mentor.mentor.exception.ApplicationException;
@@ -12,7 +13,7 @@ import com.mentor.mentor.service.CourseService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.ModelMap;
+
 
 import java.util.Collections;
 import java.util.List;
@@ -53,6 +54,20 @@ public class CourseServiceImpl implements CourseService {
 
         Course res = courseRepository.saveAndFlush(course);
         return modelMapper.map(res, CourseView.class);
+
+    }
+
+    public UserView getTeacherByCourse(Long id) {
+        Course course =
+                courseRepository.findById(id)
+                        .orElseThrow(() -> new ApplicationException(
+                                CATEGORY_NOT_FOUND,
+                                Collections.singletonMap(ID, id)
+                        ));
+
+       User user = course.getTeacher_id();
+
+        return modelMapper.map(user, UserView.class);
 
     }
 

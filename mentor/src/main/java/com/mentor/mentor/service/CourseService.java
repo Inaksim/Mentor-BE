@@ -3,6 +3,7 @@ package com.mentor.mentor.service;
 import com.mentor.mentor.dto.form.SaveCourseForm;
 import com.mentor.mentor.dto.form.UpdateCourseForm;
 import com.mentor.mentor.dto.view.CourseView;
+import com.mentor.mentor.dto.view.UserView;
 import com.mentor.mentor.entity.Course;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ public interface CourseService {
 
     void deleteCourse(Long id);
 
+    UserView getTeacherByCourse(Long id);
 
 
 }

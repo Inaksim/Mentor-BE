@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
                 .email(userDetails.getUsername())
                 .firstName(userDetails.getFirstName())
                 .lastName(userDetails.getLastName())
-                .role(roles.get(0))
+                .role(userDetails.getRole())
                 .build();
 
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(userView);

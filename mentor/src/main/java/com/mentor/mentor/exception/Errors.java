@@ -20,28 +20,26 @@ BAD_CREDENTIALS("BAD_CREDENTIALS", HttpStatus.BAD_REQUEST , "Bad Credentials"),
 UNAUTHORIZED("UNAUTHORIZED", HttpStatus.UNAUTHORIZED, "User is unauthorized"),
 SERVER_ERROR("SERVER_ERROR", HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong. Unexpected issue...");
 
-final String key;
-final HttpStatus httpStatus;
-final String message;
+    final String key;
+    final HttpStatus httpStatus;
+    final String message;
 
-Errors(String key, HttpStatus httpStatus, String message) {
-    this.message = message;
-    this.key = key;
-    this.httpStatus = httpStatus;
-}
+    Errors(String key, HttpStatus httpStatus, String message) {
+        this.message = message;
+        this.key = key;
+        this.httpStatus = httpStatus;
+    }
 
-
-public String getKey() {
-    return key;
-}
-
-
-public String getMessage() {
-    return message;
-}
-
-
-public HttpStatus getHttpStatus() {
-    return httpStatus;
-}
+    @Override
+    public String getKey() {
+        return key;
+    }
+    @Override
+    public String getMessage() {
+        return message;
+    }
+    @Override
+    public HttpStatus getHttpStatus() {
+        return httpStatus;
+    }
 }
